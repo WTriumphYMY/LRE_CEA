@@ -1,0 +1,13 @@
+package cn.edu.nwpu.lre_cea;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class LreCeaApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(LreCeaApplication.class, args);
+    }
+
+}
