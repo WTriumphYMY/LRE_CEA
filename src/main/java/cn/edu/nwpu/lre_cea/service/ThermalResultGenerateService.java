@@ -10,12 +10,6 @@ import cn.edu.nwpu.lre_cea.domain.RocketCondition;
  * @Description: 生成热力学计算结果
  */
 public interface ThermalResultGenerateService {
-    String inpFileModel = "problem   \n" +
-            "      rocket  equilibrium  frozen  nfz=1  tcest,k={0}\n" +
-            "  p,bar={1},\n" +
-            "  pi/p={2},\n" +
-            "  sup,ae/at={3},\n" +
-            "react  \n";
 
     String generateThermalResult(RocketCondition rocketCondition);
 }

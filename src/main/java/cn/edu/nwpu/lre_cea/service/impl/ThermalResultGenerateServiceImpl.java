@@ -1,6 +1,8 @@
 package cn.edu.nwpu.lre_cea.service.impl;
 
 import cn.edu.nwpu.lre_cea.domain.RocketCondition;
+import cn.edu.nwpu.lre_cea.domain.ThermalResult;
+import cn.edu.nwpu.lre_cea.service.CEAStringConsts;
 import cn.edu.nwpu.lre_cea.service.ThermalResultGenerateService;
 import org.springframework.util.ResourceUtils;
 
@@ -22,11 +24,15 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
     public String generateThermalResult(RocketCondition rocketCondition) {
         createInpFile(rocketCondition);
         try {
-            // TODO 调用FCEA2并传入参数
             File batCEAFile = ResourceUtils.getFile("classpath:cea/executeCEA.bat");
             Runtime runtime = Runtime.getRuntime();
             String[] cmds = {batCEAFile.getAbsolutePath(), rocketCondition.getProjectName()};
             Process process = runtime.exec(cmds);
+            OutputStream localOutputStream = process.getOutputStream();
+            PrintWriter localPrintWriter = new PrintWriter(localOutputStream);
+            localPrintWriter.println(rocketCondition.getProjectName() + "\n");
+            localPrintWriter.flush();
+            localPrintWriter.close();
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             System.out.println("调用FCEA2失败");
@@ -42,7 +48,7 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
     private void createInpFile(RocketCondition rocketCondition){
         String[] conditionArguments = {rocketCondition.getTemperature(), rocketCondition.getPressure(),
                 rocketCondition.getPressure(), rocketCondition.getEps()};
-        String actualInp = MessageFormat.format(ThermalResultGenerateService.inpFileModel, conditionArguments);
+        String actualInp = MessageFormat.format(CEAStringConsts.inpFileModel, conditionArguments);
         for (int i = 0; i < rocketCondition.getReactTypes().size(); i++) {
             actualInp += "  " + rocketCondition.getReactTypes().get(i)+ "=" +
                     rocketCondition.getReactNames().get(i) + " wt=" + rocketCondition.getReactWeights().get(i) + "  ";
@@ -80,9 +86,28 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
     }
 
     private String translateOutFile(String outName)throws Exception{
-        File outFile = ResourceUtils.getFile("classpath:cea/StandardRocket.out");
+        File outFile = new File(getResourceFile(), outName+".out");
         BufferedReader br = Files.newBufferedReader(outFile.toPath());
+        String lineRead = null;
+        ThermalResult thermalResult = new ThermalResult();
+        //TODO 将热力学计算结果读入持久层
+        while ((lineRead=br.readLine()) != null){
+            if (lineRead.indexOf(CEAStringConsts.PINF_P) != -1){
+                for (int i = 0; i < 4; i++){
+                    thermalResult.getEq_pivsp()[i] = lineRead.trim().split("\\s+")[i+1];
+                }
+            }
+        }
 
         return null;
+    }
+
+    private File getResourceFile(){
+        try {
+            return ResourceUtils.getFile("classpath:cea");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
