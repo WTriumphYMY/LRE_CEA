@@ -1,5 +1,7 @@
 package cn.edu.nwpu.lre_cea.domain;
 
+import java.util.Arrays;
+
 /**
  * @ClassName ThermalResult
  * @Author: wkx
@@ -368,5 +370,51 @@ public class ThermalResult {
 
     public void setFr_isp(String[] fr_isp) {
         this.fr_isp = fr_isp;
+    }
+
+    @Override
+    public String toString() {
+        return "ThermalResult{" +
+                "eq_pivsp=" + Arrays.toString(eq_pivsp) +
+                ", eq_pressure=" + Arrays.toString(eq_pressure) +
+                ", eq_temperature=" + Arrays.toString(eq_temperature) +
+                ", eq_rho=" + Arrays.toString(eq_rho) +
+                ", eq_h=" + Arrays.toString(eq_h) +
+                ", eq_u=" + Arrays.toString(eq_u) +
+                ", eq_g=" + Arrays.toString(eq_g) +
+                ", eq_s=" + Arrays.toString(eq_s) +
+                ", eq_mole=" + Arrays.toString(eq_mole) +
+                ", eq_dvdp=" + Arrays.toString(eq_dvdp) +
+                ", eq_dvdt=" + Arrays.toString(eq_dvdt) +
+                ", eq_cp=" + Arrays.toString(eq_cp) +
+                ", eq_gamma=" + Arrays.toString(eq_gamma) +
+                ", eq_sonic=" + Arrays.toString(eq_sonic) +
+                ", eq_mach=" + Arrays.toString(eq_mach) +
+                ", eq_eps=" + Arrays.toString(eq_eps) +
+                ", eq_cstar=" + Arrays.toString(eq_cstar) +
+                ", eq_cf=" + Arrays.toString(eq_cf) +
+                ", eq_ivac=" + Arrays.toString(eq_ivac) +
+                ", eq_isp=" + Arrays.toString(eq_isp) +
+                ", fr_pivsp=" + Arrays.toString(fr_pivsp) +
+                ", fr_pressure=" + Arrays.toString(fr_pressure) +
+                ", fr_temperature=" + Arrays.toString(fr_temperature) +
+                ", fr_rho=" + Arrays.toString(fr_rho) +
+                ", fr_h=" + Arrays.toString(fr_h) +
+                ", fr_u=" + Arrays.toString(fr_u) +
+                ", fr_g=" + Arrays.toString(fr_g) +
+                ", fr_s=" + Arrays.toString(fr_s) +
+                ", fr_mole=" + Arrays.toString(fr_mole) +
+                ", fr_dvdp=" + Arrays.toString(fr_dvdp) +
+                ", fr_dvdt=" + Arrays.toString(fr_dvdt) +
+                ", fr_cp=" + Arrays.toString(fr_cp) +
+                ", fr_gamma=" + Arrays.toString(fr_gamma) +
+                ", fr_sonic=" + Arrays.toString(fr_sonic) +
+                ", fr_mach=" + Arrays.toString(fr_mach) +
+                ", fr_eps=" + Arrays.toString(fr_eps) +
+                ", fr_cstar=" + Arrays.toString(fr_cstar) +
+                ", fr_cf=" + Arrays.toString(fr_cf) +
+                ", fr_ivac=" + Arrays.toString(fr_ivac) +
+                ", fr_isp=" + Arrays.toString(fr_isp) +
+                '}';
     }
 }

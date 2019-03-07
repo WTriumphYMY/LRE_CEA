@@ -4,8 +4,8 @@ import cn.edu.nwpu.lre_cea.domain.RocketCondition;
 import cn.edu.nwpu.lre_cea.domain.ThermalResult;
 import cn.edu.nwpu.lre_cea.service.CEAStringConsts;
 import cn.edu.nwpu.lre_cea.service.ThermalResultGenerateService;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,16 +18,21 @@ import java.text.MessageFormat;
  * @Version: v1.0
  * @Description: 获得热力学计算结果的实现类
  */
+@Service
 public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateService {
 
+    /**
+     *
+     * @param rocketCondition 热力学计算条件
+     * @return
+     */
     @Override
-    public String generateThermalResult(RocketCondition rocketCondition) {
+    public ThermalResult generateThermalResult(RocketCondition rocketCondition) {
         createInpFile(rocketCondition);
         try {
-            File batCEAFile = ResourceUtils.getFile("classpath:cea/executeCEA.bat");
+            File batCEAFile = new File(getResourceFile(), "executeCEA.bat");
             Runtime runtime = Runtime.getRuntime();
-            String[] cmds = {batCEAFile.getAbsolutePath(), rocketCondition.getProjectName()};
-            Process process = runtime.exec(cmds);
+            Process process = runtime.exec(batCEAFile.getAbsolutePath());
             OutputStream localOutputStream = process.getOutputStream();
             PrintWriter localPrintWriter = new PrintWriter(localOutputStream);
             localPrintWriter.println(rocketCondition.getProjectName() + "\n");
@@ -38,7 +43,16 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
             System.out.println("调用FCEA2失败");
             e.printStackTrace();
         }
-        return null;
+        ThermalResult thermalResult = null;
+        try {
+            thermalResult = translateOutFile(rocketCondition.getProjectName());
+
+        } catch (IOException e) {
+            System.out.println("翻译结果失败");
+            e.printStackTrace();
+        }
+        System.out.println(thermalResult);
+        return thermalResult;
     }
 
     /**
@@ -73,8 +87,7 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
         }
         actualInp += "end\n";
         try {
-            File parentFile = ResourceUtils.getFile("classpath:cea");
-            File inpFile = new File(parentFile, rocketCondition.getProjectName()+".inp");
+            File inpFile = new File(getResourceFile(), rocketCondition.getProjectName()+".inp");
             Files.deleteIfExists(inpFile.toPath());
             BufferedWriter bw = Files.newBufferedWriter(inpFile.toPath(), StandardCharsets.US_ASCII);
             bw.write(actualInp);
@@ -85,21 +98,243 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
         }
     }
 
-    private String translateOutFile(String outName)throws Exception{
+    /**
+     *
+     * @param outName 热力计算项目名
+     * @return 热力学计算结果domain类，包括平衡流与冻结流
+     * @throws IOException
+     */
+    private ThermalResult translateOutFile(String outName)throws IOException{
         File outFile = new File(getResourceFile(), outName+".out");
         BufferedReader br = Files.newBufferedReader(outFile.toPath());
         String lineRead = null;
         ThermalResult thermalResult = new ThermalResult();
-        //TODO 将热力学计算结果读入持久层
+        boolean flag = true; //判断是否是平衡流
         while ((lineRead=br.readLine()) != null){
             if (lineRead.indexOf(CEAStringConsts.PINF_P) != -1){
-                for (int i = 0; i < 4; i++){
-                    thermalResult.getEq_pivsp()[i] = lineRead.trim().split("\\s+")[i+1];
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_pivsp()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_pivsp()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
                 }
+            }
+            if (lineRead.indexOf(CEAStringConsts.P_BAR) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_pressure()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_pressure()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.T_K) != -1){
+                if (flag) {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_temperature()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_temperature()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.RHO_KG_CUM) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_rho()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_rho()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.H_KJ_KG) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_h()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_h()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.U_KJ_KG) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_u()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_u()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.G_KJ_KG) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_g()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_g()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.S_KJ_KG_K) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_s()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_s()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.MOLE) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_mole()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_mole()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.DLV_DLP) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_dvdp()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_dvdp()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.DLV_DLT) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_dvdt()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_dvdt()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.CP_KJ_KG_G) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_cp()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_cp()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.GAMMAS) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_gamma()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_gamma()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.SONVEL_M_SEC) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_sonic()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_sonic()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.MACH) != -1){
+                if (flag){
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getEq_mach()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 4; i++){
+                        thermalResult.getFr_mach()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.AEAT) != -1){
+                if (flag){
+                    for (int i = 0; i < 3; i++){
+                        thermalResult.getEq_eps()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 3; i++){
+                        thermalResult.getFr_eps()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.CSTAR_M_SEC) != -1){
+                if (flag){
+                    for (int i = 0; i < 3; i++){
+                        thermalResult.getEq_cstar()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 3; i++){
+                        thermalResult.getFr_cstar()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.CF) != -1){
+                if (flag){
+                    for (int i = 0; i < 3; i++){
+                        thermalResult.getEq_cf()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 3; i++){
+                        thermalResult.getFr_cf()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.IVAC_M_SEC) != -1){
+                if (flag){
+                    for (int i = 0; i < 3; i++){
+                        thermalResult.getEq_ivac()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 3; i++){
+                        thermalResult.getFr_ivac()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+            }
+            if (lineRead.indexOf(CEAStringConsts.ISP_M_SEC) != -1){
+                if (flag){
+                    for (int i = 0; i < 3; i++){
+                        thermalResult.getEq_isp()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }else {
+                    for (int i = 0; i < 3; i++){
+                        thermalResult.getFr_isp()[i] = lineRead.substring(14).trim().split("\\s+")[i];
+                    }
+                }
+                flag = false;
             }
         }
 
-        return null;
+        return thermalResult;
     }
 
     private File getResourceFile(){

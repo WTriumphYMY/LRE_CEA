@@ -1,6 +1,7 @@
 package cn.edu.nwpu.lre_cea.service;
 
 import cn.edu.nwpu.lre_cea.domain.RocketCondition;
+import cn.edu.nwpu.lre_cea.domain.ThermalResult;
 
 /**
  * @InterfaceName ThermalResultGenerateService
@@ -11,5 +12,5 @@ import cn.edu.nwpu.lre_cea.domain.RocketCondition;
  */
 public interface ThermalResultGenerateService {
 
-    String generateThermalResult(RocketCondition rocketCondition);
+    ThermalResult generateThermalResult(RocketCondition rocketCondition);
 }

@@ -14,7 +14,7 @@ public interface CEAStringConsts {
             "  pi/p={2},\n" +
             "  sup,ae/at={3},\n" +
             "react  \n";
-    String PINF_P = "Pinf/P"; //压强比
+    String PINF_P = "Pinf/P "; //压强比
     String P_BAR = "P, BAR"; //压强
     String T_K = "T, K"; //温度
     String RHO_KG_CUM = "RHO, KG/CU M"; //密度
