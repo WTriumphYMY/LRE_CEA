@@ -10,47 +10,45 @@ import java.util.Arrays;
  * @Description: 热力学计算结果实体类
  */
 public class ThermalResult {
-    String[] eq_pivsp = new String[4]; //压强比(平衡流)
-    String[] eq_pressure = new String[4]; //压强(平衡流)
-    String[] eq_temperature = new String[4]; //温度(平衡流)
-    String[] eq_rho = new String[4]; //密度(平衡流)
-    String[] eq_h = new String[4]; //焓(平衡流)
-    String[] eq_u = new String[4];//内能(平衡流)
-    String[] eq_g = new String[4]; //吉布斯能(平衡流)
-    String[] eq_s = new String[4]; //熵(平衡流)
-    String[] eq_mole = new String[4]; //摩尔质量(平衡流)
-    String[] eq_dvdp = new String[4]; //偏导数(平衡流)
-    String[] eq_dvdt = new String[4]; //偏导数(平衡流)
-    String[] eq_cp = new String[4]; //定压指数(平衡流)
-    String[] eq_gamma = new String[4]; //比热比(平衡流)
-    String[] eq_sonic = new String[4]; //声速(平衡流)
-    String[] eq_mach = new String[4]; //马赫数(平衡流)
-    String[] eq_eps = new String[3]; //面积比(平衡流)
-    String[] eq_cstar = new String[3]; //特征速度(平衡流)
-    String[] eq_cf = new String[3]; //推理系数(平衡流)
-    String[] eq_ivac = new String[3]; //真空比冲(平衡流)
-    String[] eq_isp = new String[3]; //比冲(平衡流)
+    String[] eq_pivsp = new String[5]; //压强比(平衡流)
+    String[] eq_pressure = new String[5]; //压强(平衡流)
+    String[] eq_temperature = new String[5]; //温度(平衡流)
+    String[] eq_rho = new String[5]; //密度(平衡流)
+    String[] eq_h = new String[5]; //焓(平衡流)
+    String[] eq_u = new String[5];//内能(平衡流)
+    String[] eq_g = new String[5]; //吉布斯能(平衡流)
+    String[] eq_s = new String[5]; //熵(平衡流)
+    String[] eq_mole = new String[5]; //摩尔质量(平衡流)
+    String[] eq_dvdp = new String[5]; //偏导数(平衡流)
+    String[] eq_dvdt = new String[5]; //偏导数(平衡流)
+    String[] eq_cp = new String[5]; //定压指数(平衡流)
+    String[] eq_gamma = new String[5]; //比热比(平衡流)
+    String[] eq_sonic = new String[5]; //声速(平衡流)
+    String[] eq_mach = new String[5]; //马赫数(平衡流)
+    String[] eq_eps = new String[4]; //面积比(平衡流)
+    String[] eq_cstar = new String[4]; //特征速度(平衡流)
+    String[] eq_cf = new String[4]; //推理系数(平衡流)
+    String[] eq_ivac = new String[4]; //真空比冲(平衡流)
+    String[] eq_isp = new String[4]; //比冲(平衡流)
 
-    String[] fr_pivsp = new String[4]; //压强比(冻结流)
-    String[] fr_pressure = new String[4]; //压强(冻结流)
-    String[] fr_temperature = new String[4]; //温度(冻结流)
-    String[] fr_rho = new String[4]; //密度(冻结流)
-    String[] fr_h = new String[4]; //焓(冻结流)
-    String[] fr_u = new String[4];//内能(冻结流)
-    String[] fr_g = new String[4]; //吉布斯能(冻结流)
-    String[] fr_s = new String[4]; //熵(冻结流)
-    String[] fr_mole = new String[4]; //摩尔质量(冻结流)
-    String[] fr_dvdp = new String[4]; //偏导数(冻结流)
-    String[] fr_dvdt = new String[4]; //偏导数(冻结流)
-    String[] fr_cp = new String[4]; //定压指数(冻结流)
-    String[] fr_gamma = new String[4]; //比热比(冻结流)
-    String[] fr_sonic = new String[4]; //声速(冻结流)
-    String[] fr_mach = new String[4]; //马赫数(冻结流)
-    String[] fr_eps = new String[3]; //面积比(冻结流)
-    String[] fr_cstar = new String[3]; //特征速度(冻结流)
-    String[] fr_cf = new String[3]; //推理系数(冻结流)
-    String[] fr_ivac = new String[3]; //真空比冲(冻结流)
-    String[] fr_isp = new String[3]; //比冲(冻结流)
+    String[] fr_pivsp = new String[5]; //压强比(冻结流)
+    String[] fr_pressure = new String[5]; //压强(冻结流)
+    String[] fr_temperature = new String[5]; //温度(冻结流)
+    String[] fr_rho = new String[5]; //密度(冻结流)
+    String[] fr_h = new String[5]; //焓(冻结流)
+    String[] fr_u = new String[5];//内能(冻结流)
+    String[] fr_g = new String[5]; //吉布斯能(冻结流)
+    String[] fr_s = new String[5]; //熵(冻结流)
+    String[] fr_mole = new String[5]; //摩尔质量(冻结流)
+    String[] fr_cp = new String[5]; //定压指数(冻结流)
+    String[] fr_gamma = new String[5]; //比热比(冻结流)
+    String[] fr_sonic = new String[5]; //声速(冻结流)
+    String[] fr_mach = new String[5]; //马赫数(冻结流)
+    String[] fr_eps = new String[4]; //面积比(冻结流)
+    String[] fr_cstar = new String[4]; //特征速度(冻结流)
+    String[] fr_cf = new String[4]; //推理系数(冻结流)
+    String[] fr_ivac = new String[4]; //真空比冲(冻结流)
+    String[] fr_isp = new String[4]; //比冲(冻结流)
 
     public String[] getEq_pivsp() {
         return eq_pivsp;
@@ -284,22 +282,6 @@ public class ThermalResult {
         this.fr_mole = fr_mole;
     }
 
-    public String[] getFr_dvdp() {
-        return fr_dvdp;
-    }
-
-    public void setFr_dvdp(String[] fr_dvdp) {
-        this.fr_dvdp = fr_dvdp;
-    }
-
-    public String[] getFr_dvdt() {
-        return fr_dvdt;
-    }
-
-    public void setFr_dvdt(String[] fr_dvdt) {
-        this.fr_dvdt = fr_dvdt;
-    }
-
     public String[] getFr_cp() {
         return fr_cp;
     }
@@ -404,8 +386,6 @@ public class ThermalResult {
                 ", fr_g=" + Arrays.toString(fr_g) +
                 ", fr_s=" + Arrays.toString(fr_s) +
                 ", fr_mole=" + Arrays.toString(fr_mole) +
-                ", fr_dvdp=" + Arrays.toString(fr_dvdp) +
-                ", fr_dvdt=" + Arrays.toString(fr_dvdt) +
                 ", fr_cp=" + Arrays.toString(fr_cp) +
                 ", fr_gamma=" + Arrays.toString(fr_gamma) +
                 ", fr_sonic=" + Arrays.toString(fr_sonic) +

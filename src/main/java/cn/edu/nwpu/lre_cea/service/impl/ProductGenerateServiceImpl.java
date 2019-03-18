@@ -37,7 +37,7 @@ public class ProductGenerateServiceImpl implements ProductGenerateService {
                 "    \n";
         System.out.println(inputStr);
         File inputFile = null;
-        Map<String, String> productMap = new HashMap<>();//返回的map，key为b1,b2,b3
+        Map<String, String[]> productMap = new HashMap<>();//返回的map，key为b1,b2,b3
         try {
             inputFile = ResourceUtils.getFile("classpath:cea/input.txt");
             Path inputPath = inputFile.toPath();
@@ -60,9 +60,9 @@ public class ProductGenerateServiceImpl implements ProductGenerateService {
         }
         //向map中put结果
         try {
-            productMap.put("b1", readFile(new File(inputFile.getParent()+"/B1.txt")));
-            productMap.put("b2", readFile(new File(inputFile.getParent()+"/B2.txt")));
-            productMap.put("b3", readFile(new File(inputFile.getParent()+"/B3.txt")));
+            productMap.put("b1", readFile(new File(inputFile.getParent()+"/B1.txt")).split("\\s+"));
+            productMap.put("b2", readFile(new File(inputFile.getParent()+"/B2.txt")).split("\\s+"));
+            productMap.put("b3", readFile(new File(inputFile.getParent()+"/B3.txt")).split("\\s+"));
         }catch (IOException e){
             System.out.println("b1,b2,b3.txt未找到");
         }

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>液体火箭发动机CEA计算</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/scrolling-nav.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="#page-top">LRE CEA</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#about">CEA介绍</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#react">反应物</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#product">产物</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#rocket">发动机参数</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#result">热力学结果</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="bg-primary text-white">
+    <div class="container text-center">
+      <h1>欢迎来到液体火箭发动机CEA计算</h1>
+      <p class="lead">西北工业大学航天学院燃烧、热结构与内流场重点实验室</p>
+      <p>author: wkx</p>
+    </div>
+  </header>
+
+  <section id="about">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <h2>液体火箭发动机CEA计算</h2>
+          <p class="lead">基于NASA CEA的液体火箭发动机热力学计算</p>
+          <ul>
+            <li value="">选择反应物并生成产物</li>
+            <li>选择产物</li>
+            <li>设置发动机参数</li>
+            <li>计算并查看结果</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="react" class="bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <h2 value="">选择反应物</h2>
+          <form id="reactForm" method="post">
+            <table class="table table-hover table-bordered">
+              <thead class="thead-light">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">类型</th>
+                <th scope="col">化学名称</th>
+                <th scope="col">含量(满足比例即可)</th>
+                <th scope="col">温度(K)</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>
+                  <select class="custom-select" name="reactParameters.reactTypes">
+                    <option selected value="">选择反应物类型</option>
+                    <option value="oxid">氧化剂</option>
+                    <option value="fuel">燃料</option>
+                    <option value="name">其他</option>
+                  </select>
+                </td>
+                <td><input type="text" name="reactParameters.reactNames" size="20" id="reactNameText1" onclick="showReactSelector('reactNameText1')"/></td>
+                <td><input type="text" name="reactParameters.reactWeights" size="15" /></td>
+                <td><input type="text" name="reactParameters.reactTemperatures" size="10" /></td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>
+                  <select class="custom-select" name="reactParameters.reactTypes">
+                    <option selected value="">选择反应物类型</option>
+                    <option value="oxid">氧化剂</option>
+                    <option value="fuel">燃料</option>
+                    <option value="name">其他</option>
+                  </select>
+                </td>
+                <td><input type="text" name="reactParameters.reactNames" size="20" id="reactNameText2" onclick="showReactSelector('reactNameText2')"/></td>
+                <td><input type="text" name="reactParameters.reactWeights" size="15" /></td>
+                <td><input type="text" name="reactParameters.reactTemperatures" size="10" /></td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>
+                  <select class="custom-select" name="reactParameters.reactTypes">
+                    <option selected value="">选择反应物类型</option>
+                    <option value="oxid">氧化剂</option>
+                    <option value="fuel">燃料</option>
+                    <option value="name">其他</option>
+                  </select>
+                </td>
+                <td><input type="text" name="reactParameters.reactNames" size="20" id="reactNameText3" onclick="showReactSelector('reactNameText3')"/></td>
+                <td><input type="text" name="reactParameters.reactWeights" size="15" /></td>
+                <td><input type="text" name="reactParameters.reactTemperatures" size="10" /></td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>
+                  <select class="custom-select" name="reactParameters.reactTypes">
+                    <option selected value="">选择反应物类型</option>
+                    <option value="oxid">氧化剂</option>
+                    <option value="fuel">燃料</option>
+                    <option value="name">其他</option>
+                  </select>
+                </td>
+                <td><input type="text" name="reactParameters.reactNames" size="20" id="reactNameText4" onclick="showReactSelector('reactNameText4')"/></td>
+                <td><input type="text" name="reactParameters.reactWeights" size="15" /></td>
+                <td><input type="text" name="reactParameters.reactTemperatures" size="10" /></td>
+              </tr>
+              </tbody>
+            </table>
+            <div class="js-scroll-trigger" href="#product">
+              <button type="button" class="btn btn-primary" id="generateProductBtn" onclick="generateProduct()" >生成可能的燃烧产物</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="product">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <h2>产物选择</h2>
+          <div class="form-group row">
+            <div class="col">
+              <label for="gasProduct">气相产物</label>
+              <select multiple class="form-control" id="gasProduct">
+                <option> </option>
+                <option> </option>
+                <option> </option>
+                <option> </option>
+                <option> </option>
+              </select>
+            </div>
+            <div class="col">
+              <label for="condensateProduct">凝相产物</label>
+              <select multiple class="form-control" id="condensateProduct">
+                <option> </option>
+                <option> </option>
+                <option> </option>
+                <option> </option>
+                <option> </option>
+              </select>
+            </div>
+          </div>
+          <div class="alert alert-primary" role="alert">
+            双击进行添加或删除
+          </div>
+          <form id="chosenProductForm" method="post">
+            <div class="form-group">
+              <label for="chosenProduct">已选择产物</label>
+              <select multiple class="form-control" name="reactParameters.productList" id="chosenProduct">
+                <option></option>
+                <option></option>
+                <option></option>
+                <option></option>
+                <option></option>
+              </select>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rocket" class="bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <h2>发动机参数</h2>
+          <form id="rocketForm" method="post">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">发动机编号</span>
+            </div>
+            <input type="text" name="projectName" class="form-control" aria-describedby="basic-addon3">
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">燃烧室压强(MPa)</span>
+            </div>
+            <input type="text" name="pressure" class="form-control" aria-describedby="basic-addon3">
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" >喷管膨胀比</span>
+            </div>
+            <input type="text" name="eps" class="form-control" aria-describedby="basic-addon3">
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" >预设燃烧室温度(K)</span>
+            </div>
+            <input type="text" name="temperature" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+          </div>
+          </form>
+          <div class="form-group" style="text-align:center">
+            <button class="btn btn-success btn-lg" onclick="generateThermalResult()">计算!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="result">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <h2>热力学计算结果</h2>
+          <table class="table">
+            <thead class="thead-dark">
+            <tr>
+              <th scope="col" colspan="5" style="text-align:center">平衡流计算结果</th>
+            </tr>
+            </thead>
+            <tbody id="eqTable">
+            <tr>
+              <th>参数</th>
+              <th>燃烧室</th>
+              <th>喉部</th>
+              <th>出口</th>
+              <th>出口</th>
+            </tr>
+            </tbody>
+          </table>
+
+          <table class="table">
+            <thead class="thead-light">
+            <tr>
+              <th scope="col" colspan="5" style="text-align:center">冻结流计算结果</th>
+            </tr>
+            </thead>
+            <tbody id="frTable">
+            <tr>
+              <th>参数</th>
+              <th>燃烧室</th>
+              <th>喉部</th>
+              <th>出口</th>
+              <th>出口</th>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal fade" id="reactSelector" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">推进剂选择</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group row">
+              <label for="searchText" class="col-sm-10 col-form-label">输入化学名称搜索</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="searchText" size="10">
+              </div>
+              <input type="button" value="搜索" class="btn btn-primary" onclick="searchReact()"/>
+            </div>
+          <div class="form-group row">
+            <div class="col-sm-12">
+                <strong>双击从以下列表中选择推进剂</strong>
+            </div>
+            <div class="col">
+              <label for="gasProduct">气相反应物</label>
+              <select multiple class="form-control" id="gasReact" size="8">
+              </select>
+            </div>
+            <div class="col">
+              <label for="condensateProduct">凝相反应物</label>
+              <select multiple class="form-control" id="condensateReact" size="8">
+              </select>
+            </div>
+            <div class="col">
+              <label for="condensateProduct">非反应生成物</label>
+              <select multiple class="form-control" id="noneReactProduct" size="8">
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; www.WKX_YMY.com</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="js/jquery/jquery.min.js"></script>
+  <script src="js/jquery/serializejson.js"></script>
+  <script src="js/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- Plugin JavaScript -->
+  <script src="js/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom JavaScript for this theme -->
+  <script src="js/scrolling-nav.js"></script>
+  <script src="js/custom.js"></script>
+
+</body>
+
+</html>
