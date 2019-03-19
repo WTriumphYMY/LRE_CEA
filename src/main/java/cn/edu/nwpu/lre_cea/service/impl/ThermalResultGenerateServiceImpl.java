@@ -1,9 +1,12 @@
 package cn.edu.nwpu.lre_cea.service.impl;
 
+import cn.edu.nwpu.lre_cea.exception.ResultReadException;
 import cn.edu.nwpu.lre_cea.domain.RocketCondition;
 import cn.edu.nwpu.lre_cea.domain.ThermalResult;
 import cn.edu.nwpu.lre_cea.consts.CEAStringConsts;
 import cn.edu.nwpu.lre_cea.service.ThermalResultGenerateService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import java.io.*;
@@ -20,6 +23,8 @@ import java.text.MessageFormat;
  */
 @Service
 public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateService {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      *
@@ -40,16 +45,15 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
             localPrintWriter.close();
             process.waitFor();
         } catch (IOException | InterruptedException e) {
-            System.out.println("调用FCEA2失败");
-            e.printStackTrace();
+            logger.error("找不到CEA计算程序！");
+            throw new ResultReadException("找不到CEA计算程序");
         }
-        ThermalResult thermalResult = null;
+        ThermalResult thermalResult;
         try {
             thermalResult = translateOutFile(rocketCondition.getProjectName());
-
         } catch (IOException e) {
-            System.out.println("翻译结果失败");
-            e.printStackTrace();
+            logger.error("热力学结果文件错误，结果生成错误！");
+            throw new ResultReadException("热力学结果文件错误，结果生成错误！");
         }
         return thermalResult;
     }

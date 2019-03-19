@@ -103,7 +103,7 @@ function generateProduct() {
 
         },
         error:function(e){
-            alert("网络错误，请重试！！");
+            alert("请检查反应物是否输入正确");
         }
     });
 }
@@ -159,6 +159,9 @@ function generateThermalResult() {
             $('html, body').animate({
                 scrollTop: $("#result").offset().top
             }, "fast");
+        },
+        error:function(e){
+            alert("热力学计算发生严重错误！请检查参数是否输入正确");
         }
     });
 

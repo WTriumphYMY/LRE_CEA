@@ -1,6 +1,9 @@
 package cn.edu.nwpu.lre_cea.service.impl;
 
+import cn.edu.nwpu.lre_cea.exception.GenerateProductException;
 import cn.edu.nwpu.lre_cea.service.ProductGenerateService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
@@ -23,6 +26,9 @@ import java.util.Map;
  */
 @Service
 public class ProductGenerateServiceImpl implements ProductGenerateService {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     /**
      * 调用b1b2b3.exe产生生成物
      * @param inputStr 反应物字符串
@@ -35,7 +41,7 @@ public class ProductGenerateServiceImpl implements ProductGenerateService {
                 "   \n" +
                 "    \n" +
                 "    \n";
-        System.out.println(inputStr);
+        logger.info(inputStr);
         File inputFile = null;
         Map<String, String[]> productMap = new HashMap<>();//返回的map，key为b1,b2,b3
         try {
@@ -49,14 +55,16 @@ public class ProductGenerateServiceImpl implements ProductGenerateService {
             bw.write(inputStr);
             bw.close();
         }catch (IOException e){
-            System.out.println("生成input.txt错误");
+            logger.error("生成input.txt错误");
+            throw new GenerateProductException("生成input.txt错误");
         }
         Runtime runtime = Runtime.getRuntime();
         try {
             Process process = runtime.exec(inputFile.getParent()+"\\startb1b2b3.bat");
             process.waitFor();
         } catch (InterruptedException | IOException e) {
-            System.out.println("未找到b1b2b3.exe");
+            logger.error("未找到b1b2b3.exe");
+            throw new GenerateProductException("未找到b1b2b3.exe");
         }
         //向map中put结果
         try {
@@ -64,7 +72,8 @@ public class ProductGenerateServiceImpl implements ProductGenerateService {
             productMap.put("b2", readFile(new File(inputFile.getParent()+"/B2.txt")).split("\\s+"));
             productMap.put("b3", readFile(new File(inputFile.getParent()+"/B3.txt")).split("\\s+"));
         }catch (IOException e){
-            System.out.println("b1,b2,b3.txt未找到");
+            logger.error("b1,b2,b3.txt未找到");
+            throw new GenerateProductException("b1,b2,b3.txt未找到");
         }
         return productMap;
     }
