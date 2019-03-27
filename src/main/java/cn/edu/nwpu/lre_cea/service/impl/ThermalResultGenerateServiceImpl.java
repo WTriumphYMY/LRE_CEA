@@ -1,14 +1,19 @@
 package cn.edu.nwpu.lre_cea.service.impl;
 
+import cn.edu.nwpu.lre_cea.domain.OutputResult;
 import cn.edu.nwpu.lre_cea.exception.ResultReadException;
 import cn.edu.nwpu.lre_cea.domain.RocketCondition;
 import cn.edu.nwpu.lre_cea.domain.ThermalResult;
 import cn.edu.nwpu.lre_cea.consts.CEAStringConsts;
+import cn.edu.nwpu.lre_cea.repository.OutTextRepository;
 import cn.edu.nwpu.lre_cea.service.ThermalResultGenerateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
+
+import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -25,6 +30,11 @@ import java.text.MessageFormat;
 public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateService {
 
     Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    private OutTextRepository outTextRepository;
+
+    StringBuffer resultBuffer = new StringBuffer();
 
     /**
      *
@@ -51,6 +61,10 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
         ThermalResult thermalResult;
         try {
             thermalResult = translateOutFile(rocketCondition.getProjectName());
+            OutputResult outputResult = new OutputResult();
+            outputResult.setRocketName(rocketCondition.getProjectName());
+            outputResult.setThermalResult(resultBuffer.toString());
+            saveOrUpdateThermalResult(outputResult);
         } catch (IOException e) {
             logger.error("热力学结果文件错误，结果生成错误！");
             throw new ResultReadException("热力学结果文件错误，结果生成错误！");
@@ -96,7 +110,7 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
             bw.write(actualInp);
             bw.close();
         }catch (IOException e){
-            System.out.println("inp文件生成失败！");
+            logger.error("inp文件生成失败！");
             throw new RuntimeException("inp文件生成失败！");
         }
     }
@@ -114,6 +128,7 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
         ThermalResult thermalResult = new ThermalResult();
         boolean flag = true; //判断是否是平衡流
         while ((lineRead=br.readLine()) != null){
+            resultBuffer.append(lineRead+"\r\n");
             if (lineRead.indexOf(CEAStringConsts.PINF_P) != -1){
                 if (flag){
                     thermalResult.getEq_pivsp()[0] = CEAStringConsts.zh_PINF_P;
@@ -377,5 +392,39 @@ public class ThermalResultGenerateServiceImpl implements ThermalResultGenerateSe
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Transactional
+    public void saveOrUpdateThermalResult(OutputResult outputResult){
+        OutputResult oldOutputResult = outTextRepository.findOutputResultByRocketName(outputResult.getRocketName());
+        if (oldOutputResult != null){
+            outputResult.setPk_id(oldOutputResult.getPk_id());
+            outTextRepository.save(outputResult);
+        }else {
+            outTextRepository.save(outputResult);
+        }
+    }
+
+    @Override
+    public ThermalResult getThermalResultByRocketName(String rocketName) {
+        OutputResult outputResult = outTextRepository.findOutputResultByRocketName(rocketName);
+        try {
+            File outFile = new File(getResourceFile(), rocketName+".out");
+            Files.deleteIfExists(outFile.toPath());
+            BufferedWriter bw = Files.newBufferedWriter(outFile.toPath(), StandardCharsets.US_ASCII);
+            bw.write(outputResult.getThermalResult());
+            bw.close();
+        }catch (IOException e){
+            logger.error("从数据库生成.out文件失败！");
+            throw new RuntimeException("从数据库生成.out文件失败！");
+        }
+        ThermalResult thermalResult;
+        try {
+            thermalResult = translateOutFile(rocketName);
+        } catch (IOException e) {
+            logger.error("读取数据库中热力学结果错误！");
+            throw new ResultReadException("读取数据库中热力学结果错误！");
+        }
+        return thermalResult;
     }
 }

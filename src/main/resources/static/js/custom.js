@@ -197,3 +197,23 @@ function showResult(data) {
         }
     })
 }
+
+function searchForResult() {
+    var rocketName = $('#searchRocket').val();
+    $.ajax({
+        url:"/cea/search_result",
+        type:"post",
+        dataType:"json",
+        data: {partialName: rocketName},
+        async:false,
+        success:function(data){
+            showResult(data);
+            $('html, body').animate({
+                scrollTop: $("#result").offset().top
+            }, "fast");
+        },
+        error:function(e){
+            alert("热力学计算发生严重错误！请检查参数是否输入正确");
+        }
+    });
+}

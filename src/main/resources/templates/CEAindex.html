@@ -44,6 +44,9 @@
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#result">热力学结果</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#previous">读取已计算结果</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -282,6 +285,25 @@
             </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="previous" class="bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <h2>查找已计算过了的发动机</h2>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">发动机编号</span>
+              </div>
+              <input type="text" name="projectName" id="searchRocket" class="form-control" aria-describedby="basic-addon3">
+            </div>
+          <div class="form-group" style="text-align:center">
+            <button class="btn btn-success btn-lg" onclick="searchForResult()">查看!</button>
+          </div>
         </div>
       </div>
     </div>

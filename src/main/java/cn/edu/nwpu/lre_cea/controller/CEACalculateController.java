@@ -48,7 +48,6 @@ public class CEACalculateController {
         reactParameters.setReactTypes(reactParameters.getReactTypes().stream()
                 .filter(str -> !str.equals(""))
                 .collect(Collectors.toList()));
-        
         reactParameters.setReactNames(reactParameters.getReactNames().stream()
                 .filter(str -> !str.equals(""))
                 .collect(Collectors.toList()));
@@ -114,5 +113,11 @@ public class CEACalculateController {
         reactMap.put("b2", b2Find);
         reactMap.put("b3", b3Find);
         return reactMap;
+    }
+
+    @PostMapping("/cea/search_result")
+    @ResponseBody
+    public ThermalResult getExistResult(String partialName){
+        return thermalResultGenerateService.getThermalResultByRocketName(partialName);
     }
 }
