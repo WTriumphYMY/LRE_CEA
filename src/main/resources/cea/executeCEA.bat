@@ -1,4 +1,4 @@
-@echo off
+@echo on
 cd /d %~dp0
 
-start FCEA2.exe
+FCEA2.exe

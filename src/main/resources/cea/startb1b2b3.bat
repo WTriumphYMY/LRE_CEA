@@ -1,4 +1,4 @@
-@echo off
+@echo on
 cd /d %~dp0
 
-start b1b2b3.exe
+b1b2b3.exe
